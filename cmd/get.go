@@ -1,5 +1,5 @@
 /*
-Copyright © 2020 NAME HERE <EMAIL ADDRESS>
+Copyright © 2020 Varun Gupta varungupta2015135@gmail.com
 
 Licensed under the Apache License, Version 2.0 (the "License");
 you may not use this file except in compliance with the License.
@@ -29,7 +29,7 @@ var getCmd = &cobra.Command{
 	Use:   "get",
 	Short: "Get tasks",
 	Long:  `Get the list of tasks present along with nitty gritty details about the tasks`,
-	RunE: func(cmd *cobra.Command, rgs []string) error {
+	RunE: func(cmd *cobra.Command, args []string) error {
 		id, _ := cmd.Flags().GetInt("id")
 		if id != 0 {
 			fmt.Println("ID provided: ", id)
@@ -68,5 +68,5 @@ var getCmd = &cobra.Command{
 func init() {
 	rootCmd.AddCommand(getCmd)
 	getCmd.Flags().BoolP("detailed", "d", false, "Get detailed information")
-	getCmd.Flags().IntP("id", "i", 0, "Get task by ID")
+	getCmd.Flags().StringP("id", "i", "", "Get task by ID")
 }

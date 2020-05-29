@@ -2,6 +2,7 @@ package access
 
 import (
 	"context"
+	"encoding/json"
 	"log"
 
 	"github.com/Tak1za/tasker/models"
@@ -58,6 +59,21 @@ func GetTasks() ([]primitive.M, error) {
 	}
 
 	return results, nil
+}
+
+func GetTask(id string) (primitive.M, error) {
+	var result bson.M
+	var objId primitive.ObjectID
+	err := json.Unmarshal([]byte(id), &objId)
+	if err != nil {
+		return nil, err
+	}
+	err = collection.FindOne(context.Background(), bson.D{{"_id", objId}}).Decode(&result)
+	if err != nil {
+		return nil, err
+	}
+
+	return result, nil
 }
 
 func AddTask(task models.ToDoList) (primitive.ObjectID, error) {
