@@ -7,63 +7,52 @@ import (
 )
 
 func GetTasks(payload []primitive.M, detailed bool) (interface{}, error) {
-	var task models.ToDoList
-
 	if detailed {
 		var results []models.ToDoList
-		var task models.ToDoListDB
-		var res models.ToDoList
 		for _, d := range payload {
-			b, _ := bson.Marshal(d)
-			err := bson.Unmarshal(b, &task)
+			res, err := convertToTask(d)
 			if err != nil {
 				return nil, err
 			}
-
-			res.ID = task.ID.Hex()
-			res.Task = task.Task
-			res.Status = task.Status
 			results = append(results, res)
 		}
 		return results, nil
 	} else {
 		var results []string
 		for _, d := range payload {
-			b, _ := bson.Marshal(d)
-			err := bson.Unmarshal(b, &task)
+			res, err := convertToTask(d)
 			if err != nil {
 				return nil, err
 			}
-			results = append(results, task.Task)
+			results = append(results, res.Task)
 		}
-
 		return results, nil
 	}
 }
 
 func GetTask(payload primitive.M, detailed bool) (interface{}, error) {
+	res, err := convertToTask(payload)
+	if err != nil {
+		return nil, err
+	}
 	if detailed {
-		var task models.ToDoListDB
-		var res models.ToDoList
-		b, _ := bson.Marshal(payload)
-		err := bson.Unmarshal(b, &task)
-		if err != nil {
-			return nil, err
-		}
-
-		res.ID = task.ID.Hex()
-		res.Task = task.Task
-		res.Status = task.Status
-
 		return res, nil
 	} else {
-		var task models.ToDoListDB
-		b, _ := bson.Marshal(payload)
-		err := bson.Unmarshal(b, &task)
-		if err != nil {
-			return nil, err
-		}
-
-		return task.Task, nil
+		return res.Task, nil
 	}
+}
+
+func convertToTask(data primitive.M) (models.ToDoList, error) {
+	var task models.ToDoListDB
+	b, _ := bson.Marshal(data)
+	err := bson.Unmarshal(b, &task)
+	if err != nil {
+		return models.ToDoList{}, err
+	}
+	res := models.ToDoList{
+		ID:     task.ID.Hex(),
+		Task:   task.Task,
+		Status: task.Status,
+	}
+	return res, nil
 }

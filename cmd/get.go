@@ -32,7 +32,6 @@ var getCmd = &cobra.Command{
 	RunE: func(cmd *cobra.Command, args []string) error {
 		id, _ := cmd.Flags().GetString("id")
 		if id != "" {
-			fmt.Println(id)
 			payload, err := access.GetTask(id)
 			if err != nil {
 				return err

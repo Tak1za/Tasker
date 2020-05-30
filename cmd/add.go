@@ -16,6 +16,8 @@ limitations under the License.
 package cmd
 
 import (
+	"errors"
+
 	"github.com/Tak1za/tasker/access"
 	"github.com/Tak1za/tasker/models"
 	"github.com/spf13/cobra"
@@ -39,6 +41,8 @@ var addCmd = &cobra.Command{
 			if err != nil {
 				return err
 			}
+		} else {
+			return errors.New("A task message needs to be added")
 		}
 		return nil
 	},
