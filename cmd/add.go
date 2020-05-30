@@ -16,6 +16,8 @@ limitations under the License.
 package cmd
 
 import (
+	"github.com/Tak1za/tasker/access"
+	"github.com/Tak1za/tasker/models"
 	"github.com/spf13/cobra"
 )
 
@@ -25,13 +27,27 @@ var addCmd = &cobra.Command{
 	Short: "Add a new task",
 	Long:  `Add a new task and start marking its progress`,
 	RunE: func(cmd *cobra.Command, args []string) error {
+		t, _ := cmd.Flags().GetString("task")
+		if t != "" {
+			var task models.ToDoListDB
+			task.Task = t
+			s, _ := cmd.Flags().GetBool("status")
+			if s {
+				task.Status = s
+			}
+			_, err := access.AddTask(task)
+			if err != nil {
+				return err
+			}
+		}
 		return nil
 	},
 }
 
 func init() {
 	rootCmd.AddCommand(addCmd)
-
+	addCmd.Flags().BoolP("status", "s", false, "Set status")
+	addCmd.Flags().StringP("task", "t", "", "Add task")
 	// Here you will define your flags and configuration settings.
 
 	// Cobra supports Persistent Flags which will work for this command

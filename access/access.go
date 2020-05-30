@@ -74,7 +74,7 @@ func GetTask(id string) (primitive.M, error) {
 	return result, nil
 }
 
-func AddTask(task models.ToDoList) (primitive.ObjectID, error) {
+func AddTask(task models.ToDoListDB) (primitive.ObjectID, error) {
 	insertResult, err := collection.InsertOne(context.Background(), task)
 	if err != nil {
 		return primitive.NilObjectID, err
