@@ -40,3 +40,30 @@ func GetTasks(payload []primitive.M, detailed bool) (interface{}, error) {
 		return results, nil
 	}
 }
+
+func GetTask(payload primitive.M, detailed bool) (interface{}, error) {
+	if detailed {
+		var task models.ToDoListDB
+		var res models.ToDoList
+		b, _ := bson.Marshal(payload)
+		err := bson.Unmarshal(b, &task)
+		if err != nil {
+			return nil, err
+		}
+
+		res.ID = task.ID.Hex()
+		res.Task = task.Task
+		res.Status = task.Status
+
+		return res, nil
+	} else {
+		var task models.ToDoListDB
+		b, _ := bson.Marshal(payload)
+		err := bson.Unmarshal(b, &task)
+		if err != nil {
+			return nil, err
+		}
+
+		return task.Task, nil
+	}
+}

@@ -30,9 +30,30 @@ var getCmd = &cobra.Command{
 	Short: "Get tasks",
 	Long:  `Get the list of tasks present along with nitty gritty details about the tasks`,
 	RunE: func(cmd *cobra.Command, args []string) error {
-		id, _ := cmd.Flags().GetInt("id")
-		if id != 0 {
-			fmt.Println("ID provided: ", id)
+		id, _ := cmd.Flags().GetString("id")
+		if id != "" {
+			fmt.Println(id)
+			payload, err := access.GetTask(id)
+			if err != nil {
+				return err
+			}
+
+			detailed, _ := cmd.Flags().GetBool("detailed")
+			if detailed {
+				result, err := helper.GetTask(payload, true)
+				if err != nil {
+					return err
+				}
+
+				result.(models.ToDoList).String()
+			} else {
+				result, err := helper.GetTask(payload, false)
+				if err != nil {
+					return err
+				}
+
+				fmt.Println(result)
+			}
 			return nil
 		} else {
 			payload, err := access.GetTasks()
@@ -49,7 +70,6 @@ var getCmd = &cobra.Command{
 				for _, d := range results.([]models.ToDoList) {
 					d.String()
 				}
-				return nil
 			} else {
 				results, err := helper.GetTasks(payload, false)
 				if err != nil {
@@ -59,8 +79,8 @@ var getCmd = &cobra.Command{
 				for _, d := range results.([]string) {
 					fmt.Println(d)
 				}
-				return nil
 			}
+			return nil
 		}
 	},
 }
